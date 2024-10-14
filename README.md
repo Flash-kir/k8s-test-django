@@ -164,3 +164,25 @@ kubectl apply -f ./secret.yaml
 ```bash
 kubectl apply -f ./deploy-dj.yaml
 ```
+
+#### Запуск ingress
+
+Установите `ingress`:
+
+```bash
+kubectl apply -f https://projectcontour.io/quickstart/contour.yaml
+```
+
+Запустите `ingress`:
+
+```bash
+kubectl apply -f ./ingress.yaml
+```
+
+Отредактируйте файл `/etc/hosts`(Linux) или `C:\Windows\system32\drivers\etc\hosts`(на Windows), добавьте запись:
+
+```bash
+...
+192.168.XX.XX	star-burger.test #where 192.168.XX.XX - it`s your IP in local network
+...
+```
