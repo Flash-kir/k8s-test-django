@@ -64,6 +64,7 @@ $ docker compose build web
 Аналогичным образом можно удалять библиотеки из зависимостей.
 
 <a name="env-variables"></a>
+
 ## Переменные окружения
 
 Образ с Django считывает настройки из переменных окружения:
@@ -75,3 +76,91 @@ $ docker compose build web
 `ALLOWED_HOSTS` -- настройка Django со списком разрешённых адресов. Если запрос прилетит на другой адрес, то сайт ответит ошибкой 400. Можно перечислить несколько адресов через запятую, например `127.0.0.1,192.168.0.1,site.test`. [Документация Django](https://docs.djangoproject.com/en/3.2/ref/settings/#allowed-hosts).
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
+
+## Запуск проекта в кластере minikube
+
+### Установка minikube и запуск кластера
+
+Установите [`VirtualBox`](https://www.virtualbox.org/), поднимите простой локальный [K8s Cluster](https://www.youtube.com/watch?v=WAIrMmCQ3hE&list=PLg5SS_4L6LYvN1RqaVesof8KAf-02fJSi&index=2)
+
+### Сборка образов
+
+Выполните командy для сборки образов приложения `django` и `postgres`:
+
+```bash
+docker-compose build
+```
+
+### Запуск образа `postgres`
+
+Создайте файл `.env` из примера и заполните свои значения для подключения к БД:
+
+example.env
+```bash
+POSTGRES_DB=test_k8s
+POSTGRES_USER=test_k8s
+POSTGRES_PASSWORD=your_user_password
+```
+
+```bash
+cp example.env .env
+```
+
+В файле `docker-compose.yml` пропишите IP адрес вашего сервера в настройках контейнера `db`:
+
+```bash
+...
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    ports:
+      - your_server_ip_address:5432:5432
+...
+```
+
+Запуститие образ:
+
+```bash
+docker-compose up db
+```
+
+### Загрузка образа приложения в кластер minikube
+
+Выполните загрузку образа `django_app`:
+
+```bash
+minikube image load django_app
+```
+
+### Запуск проекта в кластере
+
+#### Создание манифеста и запуск `secret`
+
+Скопируйте манифест с примера:
+
+```bash
+cp example.dj_secret.yaml dj_secret.yaml
+```
+
+Заполните манифест своими данными `base64`, для кодирования строки используйте команду:
+
+```bash
+echo -n 'your_string' | base64
+```
+
+Запустите `secret`:
+
+```bash
+kubectl apply -f ./secret.yaml
+```
+
+#### Запустите проект в кластере
+
+Выполните команду для создания `deployment` и `service`:
+
+```bash
+kubectl apply -f ./deploy-dj.yaml
+```
