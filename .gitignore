@@ -2,3 +2,15 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
+# k8s secret
+dj_secret.yaml
+
+# lesson commands
+commands
+
+# unit config test file
+config.json
+
+# env file
+.env
