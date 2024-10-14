@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app
+  namespace: default
+  labels:
+    app.kubernetes.io/name: dvmn-minikube-dj-app
+    app.kubernetes.io/instance: dvmn-minikube-dj-app-qwer
+    app.kubernetes.io/component: server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      dj: web
+  template:
+    metadata:
+      labels:
+        dj: web
+    spec:
+      containers:
+        - name: dj-site
+          image: django_app
+          imagePullPolicy: Never
+          envFrom:
+            - secretRef:
+                name: dj-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dj-entrypoint
+  namespace: default
+  labels:
+    app.kubernetes.io/name: dvmn-minikube-dj-app
+    app.kubernetes.io/instance: dvmn-minikube-dj-app-qwer
+    app.kubernetes.io/component: server
+spec:
+  type: NodePort
+  selector:
+    dj: web
+  ports:
+    - protocol: TCP
+      port: 80
+      nodePort: 30001
