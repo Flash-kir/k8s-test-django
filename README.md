@@ -127,6 +127,48 @@ cp example.env .env
 docker-compose up db
 ```
 
+#### Запуск БД в кластере при помощи helm
+
+Установите [`helm`](https://helm.sh/). Создайте `helm chart` для `postgresql`:
+
+```bash
+helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql
+```
+
+либо используя манифест `postgresql_helm_pod.yaml` заранее поменяв в нем IP адреса:
+
+```bash
+kubectl apply -f ./postgresql_helm_pod.yaml
+```
+
+Настройте подключение к `helm chart`, для этого используйте `databaseurl` вида(предварительно закодировав его в `base64`, например [здесь](https://www.base64encode.org/)):
+
+```bash
+postgres://postgres:password@postgresql-1728985862.default.svc.cluster.local:5432/postgres
+```
+
+где 
+- `default` это `namespace` кластера `minikube`
+- `postgresql-1728985862` имя созданного `pod`
+- `password` это пароль из `secret` файла `postgresql`, который генерируется при создании `chart`, можно получить его закодированном в `base64` командой:
+
+```bash
+kubectl get secret --namespace default postgresql-1728985862 -o jsonpath="{.data.postgres-password}"
+```
+
+Перед первым запуском приложения необходимо сделать миграции и создать пользователя, для этого зайдите на под приложения:
+
+```bash
+kubectl exec -it django-app-.... /bin/bash
+```
+
+Выполните команды:
+
+```bash
+python manage.py migrate
+python manage.py createsuperuser
+```
+
 ### Загрузка образа приложения в кластер minikube
 
 Выполните загрузку образа `django_app`:
