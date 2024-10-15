@@ -186,3 +186,13 @@ kubectl apply -f ./ingress.yaml
 192.168.XX.XX	star-burger.test #where 192.168.XX.XX - it`s your IP in local network
 ...
 ```
+
+#### Запуск django-clearsession и django-migrate
+
+В папке `./jobs` расположены манифесты для запуска `django-clearsession` и `django-migrate`.
+Для выполнения [настройте расписание](https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules) в файлах `clearsession-job.yaml` и `migrate-job.yaml`(пункт `schedule: "* * * * *"). Затем запустите воркеры:
+
+```bash
+kubectl apply -f .\jobs\migrate-job.yaml
+kubectl apply -f .\jobs\clearsession-job.yaml
+```
