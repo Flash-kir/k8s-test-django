@@ -2,7 +2,6 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: django-app-migrate
-#  namespace: default
 spec:
   schedule: "30 0 * * *"
   jobTemplate:
