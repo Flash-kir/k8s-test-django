@@ -131,14 +131,24 @@ docker-compose up db
 
 Установите [`helm`](https://helm.sh/). Создайте `helm chart` для `postgresql`:
 
+##### создание и настройка подключения к `helm chart` для `postgresql` с помощью `chart`:
+
+создайте `helm chart`:
+
 ```bash
-helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql
+helm install dj-app-db .\postgresql\
 ```
 
-либо используя манифест `postgresql_helm_pod.yaml` заранее поменяв в нем IP адреса:
+если вместо `dj-app-db` укажете другое имя, то измените значение `DATABASE_URL` в `dj_secret.yaml`, предварительно закодировав его в `base64`, например [здесь](https://www.base64encode.org/):
 
 ```bash
-kubectl apply -f ./postgresql_helm_pod.yaml
+postgres://postgres:password@dj-app-db.default.svc.cluster.local:5432/postgres
+```
+
+##### создание и настройка подключения к `helm chart` для `postgresql` пошагово с помощью команд
+
+```bash
+helm install my-release oci://registry-1.docker.io/bitnamicharts/postgresql
 ```
 
 Настройте подключение к `helm chart`, для этого используйте `databaseurl` вида(предварительно закодировав его в `base64`, например [здесь](https://www.base64encode.org/)):
