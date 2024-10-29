@@ -14,3 +14,7 @@ config.json
 
 # env file
 .env
+
+#useless manifests
+postgresql-helm-manifest.yaml
+dj-chart
