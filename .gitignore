@@ -17,4 +17,3 @@ config.json
 
 #useless manifests
 postgresql-helm-manifest.yaml
-dj-chart
