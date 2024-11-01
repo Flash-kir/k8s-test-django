@@ -248,3 +248,13 @@ kubectl apply -f ./ingress.yaml
 kubectl apply -f .\jobs\migrate-job.yaml
 kubectl apply -f .\jobs\clearsession-job.yaml
 ```
+
+#### Запуск проекта с помощью `helm`:
+
+Для запуска проекта выполните установку `helm chart`:
+
+```bash
+helm install dj-app .\dj-chart\
+```
+
+где `dj-app` название приложения
