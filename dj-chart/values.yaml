@@ -19,6 +19,21 @@ secrets: [
   },
 ]
 
+jobs:
+  ttlSecondsAfterFinished: 100
+  activeDeadlineSeconds: 60
+  restartPolicy: Never
+  backoffLimit: 3
+  clearsessions:
+    schedule: "0 0 * * 0,6"
+    name: clearsessions-container
+    commands: ["python", "manage.py", "clearsessions"]
+  migrate:
+    schedule: "30 0 * * *"
+    name: migrate-container
+    commands: ["python", "manage.py", "migrate", "--noinput"]
+    
+
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 # This is to override the chart name.
