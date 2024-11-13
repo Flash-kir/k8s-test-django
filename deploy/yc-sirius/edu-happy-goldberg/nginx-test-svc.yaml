@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: edu-happy-goldberg
+status:
+  loadBalancer: {}
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30231
+  selector:
+    app: nginx
+  type: NodePort
+  sessionAffinity: None
