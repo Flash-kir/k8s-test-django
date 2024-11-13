@@ -77,6 +77,15 @@ $ docker compose build web
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
 
+## Запуск тестового сервера `nginx` в `yc`
+
+Выполните команды:
+
+```bash
+kubectl apply -f .\deploy\yc-sirius\edu-happy-goldberg\nginx-test-pod.yaml
+kubectl apply -f .\deploy\yc-sirius\edu-happy-goldberg\nginx-test-svc.yaml
+```
+
 ## Запуск проекта в кластере minikube
 
 ### Установка minikube и запуск кластера
