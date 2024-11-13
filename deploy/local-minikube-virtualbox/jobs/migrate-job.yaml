@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: django-app-migrate
+spec:
+  schedule: "30 0 * * *"
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 100
+      activeDeadlineSeconds: 60
+      template:
+        spec:
+          containers:
+            - name: migrate-container
+              image: django_app
+              command:
+              - python
+              - manage.py
+              - migrate
+              - --noinput
+              imagePullPolicy: Never
+              envFrom:
+                - secretRef:
+                    name: dj-secret
+          restartPolicy: Never
+      backoffLimit: 3
