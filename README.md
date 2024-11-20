@@ -134,6 +134,8 @@ psql postgres://database_url?sslmode=require
 
 ## Запуск проекта в `yc`
 
+Проект запущен по следующему адресу [https://edu-happy-goldberg.sirius-k8s.dvmn.org/admin/](https://edu-happy-goldberg.sirius-k8s.dvmn.org/admin/)
+
 ### Выложите образ вашего приложения на `docker hub`
 
 Для этого привяжите его к `docker hub`, где `version` указываем хэш последнего коммита для `dev` окружения и версию в формате `X.X.X` для `prod` окружения:
