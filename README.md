@@ -79,12 +79,50 @@ $ docker compose build web
 
 ## Запуск тестового сервера `nginx` в `yc`
 
-Выполните команды:
+Выполните команду:
 
 ```bash
-kubectl apply -f .\deploy\yc-sirius\edu-happy-goldberg\nginx-test-pod.yaml
-kubectl apply -f .\deploy\yc-sirius\edu-happy-goldberg\nginx-test-svc.yaml
+kubectl apply -f .\deploy\yc-sirius\edu-happy-goldberg\nginx-test.yaml
 ```
+
+## Запуск тестового pod `postgresql` в `yc` для проверки подключения к БД
+
+Создайте манифест `pg-root-cert`:
+
+```bash
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pg-root-cert
+  namespace: edu-happy-goldberg #имя вашей node
+data:
+  root.crt: >-
+    #содержимое вашего файла root.crt в base64 
+type: Opaque
+```
+
+Выполните команду:
+
+```bash
+kubectl apply -f .\deploy\yc-sirius\edu-happy-goldberg\psql-test.yaml
+```
+
+Зайдите н апод командой, где `ubuntu-psql` имя созданного пода(можно посмотреть командой `kubectl get pods`):
+
+```bash
+kubectl exec -it ubuntu-psql bash
+```
+
+Для проверки подключения к БД выполните команду, где `database_url` - настройки подключения к БД, если `url` содержит спецсимволы, например в пароле,
+то надо их заменить в формате `%00`, например [здесь](https://www.urlencoder.org/):
+
+```bash
+psql postgres://database_url?sslmode=require
+```
+
+## Запуск проекта в `yc`
+
+........
 
 ## Запуск проекта в кластере minikube
 
