@@ -79,6 +79,12 @@ $ docker compose build web
 
 ## Запуск тестового сервера `nginx` в `yc`
 
+Для выполнения команд без постоянного указания `namespace` задайте имя по умолчанию:
+
+```bash
+kubectl config set-context --current --namespace=<namespace-name>
+```
+
 Выполните команду:
 
 ```bash
@@ -87,7 +93,7 @@ kubectl apply -f .\deploy\yc-sirius\edu-happy-goldberg\nginx-test.yaml
 
 ## Запуск тестового pod `postgresql` в `yc` для проверки подключения к БД
 
-Создайте манифест `pg-root-cert`:
+Создайте манифест секрета `pg-root-cert`:
 
 ```bash
 apiVersion: v1
@@ -99,6 +105,12 @@ data:
   root.crt: >-
     #содержимое вашего файла root.crt в base64 
 type: Opaque
+```
+
+Создайте секрет командой:
+
+```bash
+kubectl apply -f .\deploy\yc-sirius\edu-happy-goldberg\pg-root-cert.yaml
 ```
 
 Выполните команду:
@@ -122,7 +134,46 @@ psql postgres://database_url?sslmode=require
 
 ## Запуск проекта в `yc`
 
-........
+### Выложите образ вашего приложения на `docker hub`
+
+Для этого привяжите его к `docker hub`, где `version` указываем хэш последнего коммита для `dev` окружения и версию в формате `X.X.X` для `prod` окружения:
+
+```bash
+docker tag dgango_app:latest flashkir/django-test-k8s:version
+docker pull flashkir/django-test-k8s:version
+```
+
+### Настройте `helm` `chart` `django-app` и запустите его
+
+В `.\django_add\values.yaml` укажите путь к вашему контейнеру на `docker hub`, ваши `namespase` `labels`
+
+Создайте файл секрета командой:
+
+```bash
+cp .\deploy\yc-sirius\edu-happy-goldberg\django-app\templates\secret.yaml.example .\deploy\yc-sirius\edu-happy-goldberg\django-app\templates\secret.yaml
+```
+
+и заполните переменные своими значениями в формате `base64`
+
+```bash
+apiVersion: v1
+kind: Secret
+metadata:
+  name: secret-dj
+  labels:
+    {{- include "django-app.labels" . | nindent 4 }}
+type: Opaque
+data:
+  DATABASE_URL: your_database_url
+  SECRET_KEY: your_secret_key
+  ALLOWED_HOSTS: your_hosts
+```
+
+Запустите `chart`:
+
+```bash
+helm install django-app .\deploy\yc-sirius\edu-happy-goldberg\django-app\
+```
 
 ## Запуск проекта в кластере minikube
 
