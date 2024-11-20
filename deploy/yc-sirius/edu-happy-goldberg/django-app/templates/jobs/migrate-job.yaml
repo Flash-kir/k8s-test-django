@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: "{{ .Release.Name }}-job-{{ .Values.jobs.migrate.name }}"
+spec:
+  schedule: {{ .Values.jobs.migrate.schedule }}
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: {{ .Values.jobs.ttlSecondsAfterFinished }}
+      activeDeadlineSeconds: {{ .Values.jobs.activeDeadlineSeconds }}
+      template:
+        spec:
+          containers:
+            - name: {{ .Values.jobs.migrate.name }}
+              image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+              {{- with .Values.jobs.migrate.commands }}
+              command:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}              
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              {{- with .Values.secrets }}
+              envFrom:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+          restartPolicy: {{ .Values.jobs.restartPolicy }}
+      backoffLimit: {{ .Values.jobs.backoffLimit }}
