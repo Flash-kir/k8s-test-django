@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu-psql
+  namespace: edu-happy-goldberg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ubuntu-psql
+  template:
+    metadata:
+      labels:
+        app: ubuntu-psql
+    spec:
+      volumes:
+        - name: ssl-volume
+          secret:
+            secretName: pg-root-cert
+      containers:
+        - name: ubuntu-psql
+          image: postgres:17.1
+          ports:
+            - containerPort: 80
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "password"
+          volumeMounts:
+            - name: ssl-volume
+              readOnly: true
+              mountPath: "/root/.postgresql"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ubuntu-psql
+  namespace: edu-happy-goldberg
+status:
+  loadBalancer: {}
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30231
+  selector:
+    app: ubuntu-psql
+  type: NodePort
+  sessionAffinity: None
