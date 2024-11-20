@@ -6,6 +6,8 @@ __pycache__/
 # k8s secret
 dj_secret.yaml
 
+root.crt
+
 # lesson commands
 commands
 
