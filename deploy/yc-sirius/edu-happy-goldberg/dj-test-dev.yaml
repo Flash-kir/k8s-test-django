@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu-psql
+  namespace: edu-happy-goldberg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ubuntu-psql
+  template:
+    metadata:
+      labels:
+        app: ubuntu-psql
+    spec:
+      containers:
+        - name: ubuntu-psql
+          image: flashkir/django-test-k8s:0.0.1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          envFrom:
+            - secretRef:
+                name: pg-root-cert
+            - secretRef:
+                name: postgres
+            - secretRef:
+                name: secret-dj
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ubuntu-psql
+  namespace: edu-happy-goldberg
+status:
+  loadBalancer: {}
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30231
+  selector:
+    app: ubuntu-psql
+  type: NodePort
+  sessionAffinity: None
