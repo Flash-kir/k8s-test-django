@@ -6,6 +6,7 @@ __pycache__/
 # k8s secret
 dj_secret.yaml
 secret-dj.yaml
+secret.yaml
 
 root.crt
 
